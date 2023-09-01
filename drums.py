@@ -4,7 +4,7 @@ import numpy as np
 import random
 
 # Global variables
-bpm = 40
+bpm = 50
 beats_per_measure = 4 
 measure_duration = 60.0 / bpm 
 time_between_beats = measure_duration / beats_per_measure
@@ -65,7 +65,7 @@ transition_probabilities = {
     2: {0: 0.1, 1: 0.1, 2: 0.4, 3: 0.1, 4: 0.2, 5: 0.1},
     3: {0: 0.1, 1: 0.1, 2: 0.1, 3: 0.4, 4: 0.2, 5: 0.1},
     4: {0: 0.1, 1: 0.1, 2: 0.2, 3: 0.2, 4: 0.3, 5: 0.1},
-    5: {0: 0.1, 1: 0.1, 2: 0.1, 3: 0.1, 4: 0.1, 5: 0.5}
+    5: {0: 0.1, 1: 0.1, 2: 0.2, 3: 0.1, 4: 0.1, 5: 0.4}
 }
 
 sequence_length = 32
