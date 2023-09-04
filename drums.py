@@ -88,7 +88,7 @@ for i in beats:
         output_wave.writeframes(silence)
 print("Beat Created")
 
-# Closing
+# Closing 
 Ch.close()
 Oh.close()
 kick.close()
