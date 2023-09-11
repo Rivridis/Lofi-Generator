@@ -36,19 +36,24 @@ class MusicDataset(Dataset):
             torch.tensor(network_output, dtype=torch.long),
         )
 
+
+# Define the LSTM model
 class MusicLSTM(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(MusicLSTM, self).__init__()
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.batch_norm = nn.BatchNorm1d(hidden_size)
         self.dropout = nn.Dropout(0.3)
         self.fc1 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
         out, _ = self.lstm(x)
         out = self.dropout(out[:, -1, :])  # Take only the last output
+        out = self.batch_norm(out)
         out = self.fc1(out)
         return out
-    
+
+
 class MusicLightning(LightningModule):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super().__init__()
@@ -58,13 +63,15 @@ class MusicLightning(LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        return optim.RMSprop(self.parameters(), lr=0.0001)
+        return optim.RMSprop(self.parameters(), lr=0.001)
+
 
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
         loss = nn.functional.cross_entropy(y_hat, y)
         return {"loss": loss}
+
 # Load and preprocess the data
 notes = []
 for file in glob.glob("venv/Data/*.mid"):
@@ -86,7 +93,7 @@ dataset = MusicDataset(notes, sequence_length)
 model = MusicLightning(input_size=1, hidden_size=256, num_layers=3, output_size=len(dataset.pitchnames))
 
 # Load the saved weights
-model.load_state_dict(torch.load('my_model_12.pt'))
+model.load_state_dict(torch.load('my_model.pt'))
 
 # Assuming 'model' is your PyTorch/Lightning model and 'dataset' is your MusicDataset instance
 model.eval()  # Set the model to evaluation mode

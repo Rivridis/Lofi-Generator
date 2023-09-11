@@ -61,7 +61,7 @@ class MusicLightning(LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        return optim.RMSprop(self.parameters(), lr=0.001, weight_decay=1e-5)  # Add weight decay
+        return optim.RMSprop(self.parameters(), lr=0.001)
 
 
     def training_step(self, batch, batch_idx):
@@ -93,10 +93,10 @@ dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
 
 # Initialize Lightning model and trainer
 model = MusicLightning(input_size=1, hidden_size=256, num_layers=3, output_size=len(dataset.pitchnames))
-trainer = Trainer(max_epochs=100)  # Set gpus=1 to use one GPU
+trainer = Trainer(max_epochs=20)  # Set gpus=1 to use one GPU
 
 # Train the model
 trainer.fit(model, dataloader)
 
 # Save the entire model in native PyTorch format
-torch.save(model.state_dict(), 'my_model_12.pt') 
+torch.save(model.state_dict(), 'my_model.pt') 
