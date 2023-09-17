@@ -43,12 +43,16 @@ class MusicLSTM(nn.Module):
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
         self.batch_norm = nn.BatchNorm1d(hidden_size)
         self.dropout = nn.Dropout(0.3)
+        self.activation = nn.ReLU()
+        self.softmax = nn.LogSoftmax(dim=1)
         self.fc1 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
         out, _ = self.lstm(x)
         out = self.dropout(out[:, -1, :])  # Take only the last output
         out = self.batch_norm(out)
+        out = self.activation(out)
+        out = self.softmax(out)
         out = self.fc1(out)
         return out
 
@@ -61,7 +65,7 @@ class MusicLightning(LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        return optim.RMSprop(self.parameters(), lr=0.001)
+        return optim.Adam(self.model.parameters(),lr=0.0001)
 
 
     def training_step(self, batch, batch_idx):
@@ -92,8 +96,8 @@ dataset = MusicDataset(notes, sequence_length)
 dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
 
 # Initialize Lightning model and trainer
-model = MusicLightning(input_size=1, hidden_size=256, num_layers=3, output_size=len(dataset.pitchnames))
-trainer = Trainer(max_epochs=20)  # Set gpus=1 to use one GPU
+model = MusicLightning(input_size=1, hidden_size=512, num_layers=3, output_size=len(dataset.pitchnames))
+trainer = Trainer(max_epochs=200)  # Set gpus=1 to use one GPU
 
 # Train the model
 trainer.fit(model, dataloader)
