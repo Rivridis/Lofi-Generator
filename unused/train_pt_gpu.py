@@ -54,7 +54,7 @@ class MusicLSTM(nn.Module):
         out = self.activation(out)
         out = self.softmax(out)
         out = self.fc1(out)
-        return out
+        return out 
 
 class MusicLightning(LightningModule):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
@@ -65,7 +65,7 @@ class MusicLightning(LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        return optim.Adam(self.model.parameters(),lr=0.0001)
+        return optim.Adam(self.model.parameters(),lr=0.0001,weight_decay=1e-5)
 
 
     def training_step(self, batch, batch_idx):
@@ -93,7 +93,7 @@ for file in glob.glob("venv/Data/*.mid"):
 
 sequence_length = 100
 dataset = MusicDataset(notes, sequence_length)
-dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
+dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
 
 # Initialize Lightning model and trainer
 model = MusicLightning(input_size=1, hidden_size=512, num_layers=3, output_size=len(dataset.pitchnames))

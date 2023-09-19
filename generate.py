@@ -68,7 +68,7 @@ class MusicLightning(LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        return optim.Adam(self.model.parameters(),lr=0.0001)
+        return optim.Adam(self.model.parameters(),lr=0.0001,weight_decay=1e-5)
 
 
     def training_step(self, batch, batch_idx):
@@ -106,7 +106,8 @@ model.eval()  # Set the model to evaluation mode
 start = torch.randint(0, len(dataset.network_input)-1, (1,))
 int_to_note = dict((number, note) for number, note in enumerate(dataset.pitchnames))
 pattern = dataset.network_input[start]
-print(pattern)
+#print(pattern)
+#print(int_to_note)
 
 prediction_output = []
 
@@ -125,6 +126,7 @@ for note_index in range(500):
 
         # Get the index of the predicted note
         index = torch.argmax(prediction)
+        #print(index)
 
         # Convert index to note
         result = int_to_note[int(index.item())]
@@ -133,7 +135,7 @@ for note_index in range(500):
         # Update the pattern for the next iteration
         new_note = torch.tensor([[[index]]])  # Convert index to tensor
         pattern = torch.cat((pattern, new_note), dim=1)
-        pattern = pattern[:, 1:]
+        pattern = pattern[:, -pattern.shape[1]:]
     else:
         # Handle the case where pattern is empty (e.g., with a default action or break the loop)
         print("empty")
