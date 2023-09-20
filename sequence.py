@@ -143,7 +143,3 @@ for pattern in prediction_output:
 
 midi_stream = stream.Stream(output_notes)
 midi_stream.write('midi', fp='test_output.mid')
-
-
-
-change
