@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset,DataLoader
 from music21 import converter, instrument, note, chord
+import torch.nn.functional as F
 
 # Functions and classes
 def parse_notes():
@@ -65,12 +66,19 @@ class MusicDataset(Dataset):
         )
 
 class LSTMModel(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, output_size):
+    def __init__(self, input_size, hidden_size, num_layers, output_size, dropout_rate=0.3):
         super(LSTMModel, self).__init__()
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, dropout=dropout_rate)
         self.fc = nn.Linear(hidden_size, output_size)
+        self.dropout = nn.Dropout(dropout_rate)
+        self.batchnorm = nn.BatchNorm1d(hidden_size) 
 
     def forward(self, x):
         out, _ = self.lstm(x)
-        out = self.fc(out[:, -1, :])
+        out = out[:, -1, :]
+        out = self.dropout(out)
+        out = self.batchnorm(out)
+        out = F.relu(out)
+        out = self.fc(out)
         return out
+

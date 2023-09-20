@@ -30,7 +30,7 @@ def cust_seq():
 
 # Generate
 model = lstm.LSTMModel(input_size, hidden_size, num_layers, output_size)
-model.load_state_dict(torch.load('lstm_model.pth')) #change to pt
+model.load_state_dict(torch.load('lstm_model.pt')) #change to pt
 model.eval()
 
 with torch.no_grad():
