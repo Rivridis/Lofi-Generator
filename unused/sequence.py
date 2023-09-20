@@ -1,10 +1,8 @@
 import glob
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-from pytorch_lightning import LightningModule, Trainer
 from music21 import converter, instrument, note, chord
 import music21.stream.base as stream
 
@@ -76,18 +74,18 @@ model = LSTMModel(input_size, hidden_size, num_layers, output_size)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-for epoch in range(num_epochs):
-    loss = []
-    for batch_input, batch_target in dataloader:
-        optimizer.zero_grad()
-        output = model(batch_input.unsqueeze(2).float())
-        loss = criterion(output, batch_target)
-        loss.backward()
-        optimizer.step()
-        if epoch%10 == 0:
-            print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}')
+# for epoch in range(num_epochs):
+#     loss = []
+#     for batch_input, batch_target in dataloader:
+#         optimizer.zero_grad()
+#         output = model(batch_input.unsqueeze(2).float())
+#         loss = criterion(output, batch_target)
+#         loss.backward()
+#         optimizer.step()
+#         if epoch%10 == 0:
+#             print(f'Epoch [{epoch}/{num_epochs}], Loss: {loss.item():.4f}')
 
-torch.save(model.state_dict(), 'lstm_model.pth') #change to pt
+# torch.save(model.state_dict(), 'lstm_model.pth') #change to pt
 import random
 
 def sample_with_temperature(logits, temperature=0.8):
@@ -98,16 +96,16 @@ model.load_state_dict(torch.load('lstm_model.pth')) #change to pt
 model.eval()
 prediction_output = []
 
-# lst = ['A5','E5','D5','G5','C6','E6','D6','A5','G5','C6']
-# lst2 = []
-# for i in lst:
-#     k = note_to_int.get(i)
-#     lst2.append(k)
+lst = ['A5','E5','D5','G5','C6','E6','D6','A5','G5','C6']
+lst2 = []
+for i in lst:
+    k = note_to_int.get(i)
+    lst2.append(k)
 
 with torch.no_grad():
-    random_start_idx = random.randint(0, len(sequence) - seq_length - 1)
-    start_sequence = torch.tensor(sequence[random_start_idx:random_start_idx+seq_length]).unsqueeze(0).unsqueeze(2).float()
-    #start_sequence = torch.tensor(lst2).unsqueeze(0).unsqueeze(2).float()
+    # random_start_idx = random.randint(0, len(sequence) - seq_length - 1)
+    # start_sequence = torch.tensor(sequence[random_start_idx:random_start_idx+seq_length]).unsqueeze(0).unsqueeze(2).float()
+    start_sequence = torch.tensor(lst2).unsqueeze(0).unsqueeze(2).float()
 
     for _ in range(200):  # Adjust the length of the generated sequence
         output = model(start_sequence)
