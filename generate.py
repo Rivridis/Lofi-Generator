@@ -20,7 +20,7 @@ def sample_with_temperature(logits, temperature=0.8):
     return torch.multinomial(probs, num_samples=1)
 
 def cust_seq():
-    lst = ['A5','E5','D5','G5','C6','E6','D6','A5','G5','C6']
+    lst = ['A5','E5','D5','G5','C6','E6','D6','A5','G5']
     lst2 = []
     for i in lst:
         l = lstm.note_to_int(notes)

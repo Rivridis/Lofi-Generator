@@ -48,7 +48,7 @@ def params():
     num_layers = 2
     output_size = len(pitchnames)
     batch_size = 64
-    num_epochs = 100
+    num_epochs = 150
     return seq_length,input_size,hidden_size,num_layers,output_size,batch_size,num_epochs
 
 class MusicDataset(Dataset):
