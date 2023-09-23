@@ -30,7 +30,7 @@ def cust_seq():
 
 # Generate
 model = lstm.LSTMModel(input_size, hidden_size, num_layers, output_size)
-model.load_state_dict(torch.load('lstm_model.pt')) #change to pt
+model.load_state_dict(torch.load('lstm_model_2.pt')) #change to pt
 model.eval()
 
 with torch.no_grad():
@@ -64,7 +64,8 @@ for pattern in prediction_output:
         new_note.offset = offset
         new_note.storedInstrument = instrument.Piano()
         output_notes.append(new_note)
-    offset += 0.5
+    ofl = [2.0,1.0,1.0,1.0,1.0,1.0]
+    offset += random.choice(ofl)
 
 midi_stream = stream.Stream(output_notes)
 midi_stream.write('midi', fp='test_output.mid')
